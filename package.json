@@ -14,12 +14,15 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
+    "@prisma/adapter-better-sqlite3": "^7.7.0",
     "@prisma/client": "^7.7.0",
     "@tailwindcss/typography": "^0.5.19",
     "@uiw/react-md-editor": "^4.1.0",
     "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.8.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dotenv": "^17.4.1",
     "lucide-react": "^1.8.0",
     "next": "16.2.3",
     "next-auth": "5.0.0-beta.30",
@@ -33,12 +36,22 @@
     "rehype-highlight": "^7.0.2",
     "tailwind-merge": "^3.5.0"
   },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3",
+      "prisma"
+    ]
+  },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/bcryptjs": "^3.0.0",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",
     "@types/nodemailer": "^8.0.0",
     "@types/react": "^19",

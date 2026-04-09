@@ -107,7 +107,7 @@ describe('GET /api/prompts', () => {
       expect.arrayContaining([
         expect.objectContaining({ title: { contains: 'code' } }),
         expect.objectContaining({ body: { contains: 'code' } }),
-      ]),
+      ])
     );
   });
 });

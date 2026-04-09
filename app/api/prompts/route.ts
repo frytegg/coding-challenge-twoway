@@ -38,10 +38,7 @@ export async function GET(req: NextRequest): Promise<Response> {
   const where: Prisma.PromptWhereInput = {
     isPublic: true,
     ...(q && {
-      OR: [
-        { title: { contains: q } },
-        { body: { contains: q } },
-      ],
+      OR: [{ title: { contains: q } }, { body: { contains: q } }],
     }),
     ...(tag && {
       tags: { some: { name: tag } },
@@ -94,7 +91,12 @@ export async function POST(req: NextRequest): Promise<Response> {
     return badRequest('Invalid JSON body');
   }
 
-  const { title, body: promptBody, tags, isPublic } = body as {
+  const {
+    title,
+    body: promptBody,
+    tags,
+    isPublic,
+  } = body as {
     title?: unknown;
     body?: unknown;
     tags?: unknown;
@@ -113,9 +115,7 @@ export async function POST(req: NextRequest): Promise<Response> {
   }
 
   // Normalize tags: trim, lowercase, dedupe, filter empty
-  const normalizedTags = [...new Set(
-    tags.map((t) => t.trim().toLowerCase()).filter(Boolean),
-  )];
+  const normalizedTags = [...new Set(tags.map((t) => t.trim().toLowerCase()).filter(Boolean))];
 
   const prompt = await prisma.prompt.create({
     data: {

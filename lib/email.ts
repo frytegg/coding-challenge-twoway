@@ -1,9 +1,6 @@
 import { createTransport } from 'nodemailer';
 
-export async function sendVerificationEmail(
-  email: string,
-  token: string,
-): Promise<void> {
+export async function sendVerificationEmail(email: string, token: string): Promise<void> {
   const baseUrl = process.env.NEXTAUTH_URL ?? 'http://localhost:3000';
   const verifyUrl = `${baseUrl}/api/auth/verify?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`;
 

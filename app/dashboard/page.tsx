@@ -4,10 +4,7 @@ import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { prisma } from '@/lib/db';
 import { auth } from '@/lib/auth';
-import {
-  DashboardContent,
-  type DashboardPrompt,
-} from '@/components/dashboard-content';
+import { DashboardContent, type DashboardPrompt } from '@/components/dashboard-content';
 
 export const metadata: Metadata = {
   title: 'My Prompts — PromptVault',

@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Copy, Check } from 'lucide-react';
 import { stripMarkdown, timeAgo } from '@/lib/utils';
 import { StarButton } from '@/components/star-button';
@@ -63,7 +64,7 @@ export function PromptCard({ prompt }: { prompt: PromptCardData }) {
         setTimeout(() => setCopied(false), 2000);
       });
     },
-    [prompt.body],
+    [prompt.body]
   );
 
   const plainBody = stripMarkdown(prompt.body);
@@ -76,14 +77,10 @@ export function PromptCard({ prompt }: { prompt: PromptCardData }) {
       {/* Copy button */}
       <button
         onClick={handleCopy}
-        className="absolute right-3 top-3 rounded-lg p-1.5 text-neutral-400 opacity-0 transition-all hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
+        className="absolute right-3 top-3 rounded-lg p-1.5 text-neutral-400 opacity-0 transition-all hover:bg-neutral-100 hover:text-neutral-600 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 group-hover:opacity-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
         aria-label="Copy prompt"
       >
-        {copied ? (
-          <Check className="h-4 w-4 text-emerald-500" />
-        ) : (
-          <Copy className="h-4 w-4" />
-        )}
+        {copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
       </button>
 
       {/* Title */}
@@ -115,10 +112,13 @@ export function PromptCard({ prompt }: { prompt: PromptCardData }) {
         {/* Author */}
         <div className="flex items-center gap-1.5">
           {prompt.author.image ? (
-            <img
+            <Image
               src={prompt.author.image}
               alt={prompt.author.name ?? 'User'}
+              width={20}
+              height={20}
               className="h-5 w-5 rounded-full object-cover"
+              unoptimized
             />
           ) : (
             <div className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-200 text-[10px] font-semibold text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300">

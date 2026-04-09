@@ -44,7 +44,7 @@ function DashboardCard({
   onDelete,
 }: {
   prompt: DashboardPrompt;
-  onDelete: (id: string) => void;
+  onDelete: (_id: string) => void;
 }) {
   const [copied, setCopied] = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -81,25 +81,21 @@ function DashboardCard({
       <div className="absolute right-3 top-3 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
         <button
           onClick={handleCopy}
-          className="rounded-lg p-1.5 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
+          className="rounded-lg p-1.5 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
           aria-label="Copy prompt"
         >
-          {copied ? (
-            <Check className="h-4 w-4 text-emerald-500" />
-          ) : (
-            <Copy className="h-4 w-4" />
-          )}
+          {copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
         </button>
         <Link
           href={`/prompts/${prompt.id}/edit`}
-          className="rounded-lg p-1.5 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
+          className="rounded-lg p-1.5 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
           aria-label="Edit prompt"
         >
           <Pencil className="h-4 w-4" />
         </Link>
         <button
           onClick={() => setConfirming(true)}
-          className="rounded-lg p-1.5 text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+          className="rounded-lg p-1.5 text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:hover:bg-red-900/20 dark:hover:text-red-400"
           aria-label="Delete prompt"
         >
           <Trash2 className="h-4 w-4" />
@@ -158,14 +154,14 @@ function DashboardCard({
             <button
               onClick={() => setConfirming(false)}
               disabled={deleting}
-              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm font-medium transition-colors hover:bg-neutral-50 dark:border-neutral-600 dark:hover:bg-neutral-800"
+              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm font-medium transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 dark:border-neutral-600 dark:hover:bg-neutral-800 dark:focus-visible:ring-offset-neutral-900"
             >
               Cancel
             </button>
             <button
               onClick={handleDelete}
               disabled={deleting}
-              className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-50"
+              className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 disabled:opacity-50 dark:focus-visible:ring-offset-neutral-900"
             >
               {deleting ? 'Deleting…' : 'Delete'}
             </button>
@@ -230,7 +226,7 @@ export function DashboardContent({
         <div className="flex rounded-lg border border-neutral-200 dark:border-neutral-700">
           <button
             onClick={() => handleSort('recent')}
-            className={`px-3 py-1 text-sm font-medium transition-colors ${
+            className={`px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 ${
               currentSort === 'recent'
                 ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
                 : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200'
@@ -240,7 +236,7 @@ export function DashboardContent({
           </button>
           <button
             onClick={() => handleSort('stars')}
-            className={`px-3 py-1 text-sm font-medium transition-colors ${
+            className={`px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 ${
               currentSort === 'stars'
                 ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
                 : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200'

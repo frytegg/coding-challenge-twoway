@@ -8,7 +8,7 @@ interface Toast {
 }
 
 interface ToastContextValue {
-  showToast: (message: string) => void;
+  showToast: (_message: string) => void;
 }
 
 const ToastContext = createContext<ToastContextValue>({
@@ -45,7 +45,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-function ToastItem({ toast, onDone }: { toast: Toast; onDone: (id: number) => void }) {
+function ToastItem({ toast, onDone }: { toast: Toast; onDone: (_id: number) => void }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {

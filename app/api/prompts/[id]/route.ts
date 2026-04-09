@@ -22,10 +22,7 @@ const promptInclude = {
 
 // ─── GET /api/prompts/:id ───────────────────────────────────────
 
-export async function GET(
-  _req: NextRequest,
-  { params }: RouteContext,
-): Promise<Response> {
+export async function GET(_req: NextRequest, { params }: RouteContext): Promise<Response> {
   const { id } = await params;
 
   const prompt = await prisma.prompt.findUnique({
@@ -40,10 +37,7 @@ export async function GET(
 
 // ─── PUT /api/prompts/:id ───────────────────────────────────────
 
-export async function PUT(
-  req: NextRequest,
-  { params }: RouteContext,
-): Promise<Response> {
+export async function PUT(req: NextRequest, { params }: RouteContext): Promise<Response> {
   const rl = await mutationLimiter(req);
   if (!rl.success) return rateLimited(rl.resetAt);
 
@@ -63,7 +57,12 @@ export async function PUT(
     return badRequest('Invalid JSON body');
   }
 
-  const { title, body: promptBody, tags, isPublic } = body as {
+  const {
+    title,
+    body: promptBody,
+    tags,
+    isPublic,
+  } = body as {
     title?: unknown;
     body?: unknown;
     tags?: unknown;
@@ -99,9 +98,7 @@ export async function PUT(
       return badRequest('tags must be an array of strings');
     }
 
-    const normalizedTags = [...new Set(
-      tags.map((t) => t.trim().toLowerCase()).filter(Boolean),
-    )];
+    const normalizedTags = [...new Set(tags.map((t) => t.trim().toLowerCase()).filter(Boolean))];
 
     data.tags = {
       set: [], // disconnect all existing tags
@@ -123,10 +120,7 @@ export async function PUT(
 
 // ─── DELETE /api/prompts/:id ────────────────────────────────────
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: RouteContext,
-): Promise<Response> {
+export async function DELETE(req: NextRequest, { params }: RouteContext): Promise<Response> {
   const rl = await mutationLimiter(req);
   if (!rl.success) return rateLimited(rl.resetAt);
 

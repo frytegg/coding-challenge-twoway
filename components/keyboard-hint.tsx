@@ -46,7 +46,7 @@ export function KeyboardHint() {
             </h3>
             <button
               onClick={() => setOpen(false)}
-              className="rounded p-0.5 text-neutral-400 transition-colors hover:text-neutral-600 dark:hover:text-neutral-300"
+              className="rounded p-0.5 text-neutral-400 transition-colors hover:text-neutral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:hover:text-neutral-300"
               aria-label="Close shortcuts"
             >
               <X className="h-3.5 w-3.5" />
@@ -66,7 +66,7 @@ export function KeyboardHint() {
       )}
       <button
         onClick={() => setOpen(!open)}
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-400 shadow-sm transition-colors hover:bg-neutral-50 hover:text-neutral-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-500 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-400 shadow-sm transition-colors hover:bg-neutral-50 hover:text-neutral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-500 dark:hover:bg-neutral-800 dark:hover:text-neutral-300 dark:focus-visible:ring-offset-neutral-950"
         aria-label="Keyboard shortcuts"
         title="Keyboard shortcuts"
       >

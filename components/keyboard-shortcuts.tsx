@@ -45,7 +45,7 @@ export function KeyboardShortcuts() {
     () => {
       (document.activeElement as HTMLElement)?.blur?.();
     },
-    { enableOnFormTags: ['INPUT', 'TEXTAREA', 'SELECT'] },
+    { enableOnFormTags: ['INPUT', 'TEXTAREA', 'SELECT'] }
   );
 
   return null;

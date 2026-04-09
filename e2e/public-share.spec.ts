@@ -7,7 +7,6 @@ test('Public prompt is viewable without auth', async ({ page }) => {
   // b. Click on the first visible prompt card.
   const firstCard = page.locator('a[href^="/prompts/"]').first();
   await expect(firstCard).toBeVisible();
-  const cardTitle = await firstCard.locator('h3').textContent();
   await firstCard.click();
 
   // c. Verify the prompt detail page loads with title, body content, author name, and tags.

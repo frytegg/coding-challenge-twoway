@@ -386,7 +386,7 @@ Transcript/Notes:
   const starCount = await prisma.star.count();
 
   console.log(
-    `Seeded: ${userCount} users, ${promptCount} prompts, ${tagCount} tags, ${starCount} stars`,
+    `Seeded: ${userCount} users, ${promptCount} prompts, ${tagCount} tags, ${starCount} stars`
   );
 }
 

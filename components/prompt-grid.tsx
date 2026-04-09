@@ -23,7 +23,12 @@ export function PromptGrid() {
   // Stable key representing the current filter combination
   const filterKey = `${q}|${tag}|${sort}`;
 
-  const [result, setResult] = useState<FetchResult>({ prompts: [], total: 0, starredIds: [], filterKey: '' });
+  const [result, setResult] = useState<FetchResult>({
+    prompts: [],
+    total: 0,
+    starredIds: [],
+    filterKey: '',
+  });
   const [loadingMore, setLoadingMore] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const pageRef = useRef(1);
@@ -42,7 +47,7 @@ export function PromptGrid() {
       params.set('limit', '12');
       return `/api/prompts?${params.toString()}`;
     },
-    [q, tag, sort],
+    [q, tag, sort]
   );
 
   // Fetch first page when filters change
@@ -109,7 +114,7 @@ export function PromptGrid() {
       (entries) => {
         if (entries[0].isIntersecting) loadMore();
       },
-      { rootMargin: '200px' },
+      { rootMargin: '200px' }
     );
 
     observer.observe(sentinel);
@@ -142,7 +147,7 @@ export function PromptGrid() {
         <div className="flex rounded-lg border border-neutral-200 dark:border-neutral-700">
           <button
             onClick={() => handleSort('recent')}
-            className={`px-3 py-1 text-sm font-medium transition-colors ${
+            className={`px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 ${
               sort === 'recent'
                 ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
                 : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200'
@@ -152,7 +157,7 @@ export function PromptGrid() {
           </button>
           <button
             onClick={() => handleSort('stars')}
-            className={`px-3 py-1 text-sm font-medium transition-colors ${
+            className={`px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 ${
               sort === 'stars'
                 ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
                 : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200'
@@ -177,9 +182,7 @@ export function PromptGrid() {
             No prompts found
           </p>
           <p className="mt-1 text-sm text-neutral-400 dark:text-neutral-500">
-            {q || tag
-              ? 'Try adjusting your search or filters.'
-              : 'Be the first to create one!'}
+            {q || tag ? 'Try adjusting your search or filters.' : 'Be the first to create one!'}
           </p>
         </div>
       )}
@@ -196,9 +199,7 @@ export function PromptGrid() {
           {/* Infinite scroll sentinel */}
           {hasMore && (
             <div ref={sentinelRef} className="flex items-center justify-center py-8">
-              {loadingMore && (
-                <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
-              )}
+              {loadingMore && <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />}
             </div>
           )}
         </>

@@ -9,7 +9,7 @@ const eslintConfig = defineConfig([
   prettierConfig,
   {
     rules: {
-      'no-unused-vars': 'warn',
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
     },
   },
   // Override default ignores of eslint-config-next.

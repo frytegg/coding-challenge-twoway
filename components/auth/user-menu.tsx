@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useSession, signOut } from 'next-auth/react';
+import Image from 'next/image';
 import { SignInDialog } from './sign-in-dialog';
 
 function getInitials(name: string): string {
@@ -41,7 +42,7 @@ export function UserMenu() {
       <>
         <button
           onClick={() => setDialogOpen(true)}
-          className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-800 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-200"
+          className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-200 dark:focus-visible:ring-offset-neutral-950"
         >
           Sign In
         </button>
@@ -56,13 +57,17 @@ export function UserMenu() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setDropdownOpen(!dropdownOpen)}
-        className="flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800"
+        className="flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:hover:bg-neutral-800"
+        aria-label="User menu"
       >
         {user.image ? (
-          <img
+          <Image
             src={user.image}
             alt={user.name ?? 'User'}
+            width={32}
+            height={32}
             className="h-8 w-8 rounded-full object-cover"
+            unoptimized
           />
         ) : (
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-200 text-xs font-semibold text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300">
@@ -94,14 +99,12 @@ export function UserMenu() {
             <p className="truncate text-sm font-medium text-neutral-900 dark:text-neutral-100">
               {user.name}
             </p>
-            <p className="truncate text-xs text-neutral-500 dark:text-neutral-400">
-              {user.email}
-            </p>
+            <p className="truncate text-xs text-neutral-500 dark:text-neutral-400">{user.email}</p>
           </div>
           <div className="py-1">
             <a
               href="/dashboard"
-              className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800"
+              className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-500 dark:text-neutral-200 dark:hover:bg-neutral-800"
               onClick={() => setDropdownOpen(false)}
             >
               My Prompts
@@ -111,7 +114,7 @@ export function UserMenu() {
                 setDropdownOpen(false);
                 signOut();
               }}
-              className="block w-full px-4 py-2 text-left text-sm text-neutral-700 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800"
+              className="block w-full px-4 py-2 text-left text-sm text-neutral-700 hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-500 dark:text-neutral-200 dark:hover:bg-neutral-800"
             >
               Sign Out
             </button>

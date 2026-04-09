@@ -38,7 +38,7 @@ export function TagFilter() {
     <div className="no-scrollbar flex gap-2 overflow-x-auto py-1">
       <button
         onClick={() => handleClick('')}
-        className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
+        className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 ${
           !activeTag
             ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
             : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700'
@@ -50,7 +50,7 @@ export function TagFilter() {
         <button
           key={tag.id}
           onClick={() => handleClick(tag.name)}
-          className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
+          className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 ${
             activeTag === tag.name
               ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
               : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700'

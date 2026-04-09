@@ -14,7 +14,7 @@ function SearchInput({
   onSearch,
 }: {
   initialQuery: string;
-  onSearch: (value: string) => void;
+  onSearch: (_value: string) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState(initialQuery);
@@ -41,7 +41,8 @@ function SearchInput({
         placeholder="Search prompts..."
         value={query}
         onChange={(e) => handleChange(e.target.value)}
-        className="h-9 w-full rounded-lg border border-neutral-200 bg-neutral-50 pl-9 pr-16 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-neutral-400 focus:bg-white focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:border-neutral-500 dark:focus:bg-neutral-800"
+        aria-label="Search prompts"
+        className="h-9 w-full rounded-lg border border-neutral-200 bg-neutral-50 pl-9 pr-16 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-violet-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-violet-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:border-violet-500 dark:focus:bg-neutral-800"
       />
       <kbd className="pointer-events-none absolute right-2.5 top-1/2 hidden -translate-y-1/2 select-none rounded border border-neutral-200 bg-white px-1.5 py-0.5 text-[10px] font-medium text-neutral-400 sm:inline-block dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-500">
         Ctrl+K
@@ -65,7 +66,7 @@ function SearchBar() {
       }
       router.push(`/?${params.toString()}`);
     },
-    [router, searchParams],
+    [router, searchParams]
   );
 
   // key={urlQuery} resets SearchInput state when URL changes externally (back/forward)
@@ -128,7 +129,7 @@ export function Navbar() {
 
         {/* Mobile hamburger */}
         <button
-          className="ml-auto inline-flex items-center justify-center rounded-lg p-1.5 text-neutral-600 transition-colors hover:bg-neutral-100 md:hidden dark:text-neutral-300 dark:hover:bg-neutral-800"
+          className="ml-auto inline-flex items-center justify-center rounded-lg p-1.5 text-neutral-600 transition-colors hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 md:hidden dark:text-neutral-300 dark:hover:bg-neutral-800"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >

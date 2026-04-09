@@ -55,7 +55,9 @@ test('Full CRUD happy path', async ({ page }) => {
   await page.getByRole('button', { name: 'Save Changes' }).click();
 
   // g. Verify the updated title is displayed.
-  await expect(page.locator('h1.text-3xl')).toHaveText('E2E Test Prompt (Edited)', { timeout: 10000 });
+  await expect(page.locator('h1.text-3xl')).toHaveText('E2E Test Prompt (Edited)', {
+    timeout: 10000,
+  });
 
   // h. Click "Delete" button. Confirm deletion.
   await page.getByRole('button', { name: 'Delete' }).click();

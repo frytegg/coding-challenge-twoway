@@ -6,7 +6,7 @@ import { mutationLimiter } from '@/lib/rate-limit';
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<Response> {
   const rl = await mutationLimiter(req);
   if (!rl.success) return rateLimited(rl.resetAt);

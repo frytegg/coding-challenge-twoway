@@ -8,11 +8,7 @@ export const metadata: Metadata = {
   title: 'Edit Prompt — PromptVault',
 };
 
-export default async function EditPromptPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function EditPromptPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   const [session, prompt] = await Promise.all([

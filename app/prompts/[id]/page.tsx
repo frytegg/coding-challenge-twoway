@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import { Pencil, ArrowLeft } from 'lucide-react';
@@ -125,10 +126,13 @@ export default async function PromptDetailPage({ params }: PageProps) {
           <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400">
             <div className="flex items-center gap-1.5">
               {prompt.author.image ? (
-                <img
+                <Image
                   src={prompt.author.image}
                   alt={prompt.author.name ?? 'User'}
+                  width={24}
+                  height={24}
                   className="h-6 w-6 rounded-full object-cover"
+                  unoptimized
                 />
               ) : (
                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-200 text-xs font-semibold text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300">
@@ -187,9 +191,7 @@ export default async function PromptDetailPage({ params }: PageProps) {
 
         {/* Prompt body — rendered markdown */}
         <div className="prose prose-neutral max-w-none dark:prose-invert">
-          <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
-            {prompt.body}
-          </ReactMarkdown>
+          <ReactMarkdown rehypePlugins={[rehypeHighlight]}>{prompt.body}</ReactMarkdown>
         </div>
       </div>
     </>

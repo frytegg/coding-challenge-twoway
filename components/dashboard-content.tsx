@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Star, Copy, Check, Pencil, Trash2, Plus, FileText } from 'lucide-react';
 import { stripMarkdown, timeAgo } from '@/lib/utils';
 
@@ -179,14 +180,24 @@ function DashboardCard({
 
 export function DashboardContent({
   initialPrompts,
+  currentSort,
 }: {
   initialPrompts: DashboardPrompt[];
+  currentSort: 'recent' | 'stars';
 }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [prompts, setPrompts] = useState(initialPrompts);
 
   const handleDelete = useCallback((id: string) => {
     setPrompts((prev) => prev.filter((p) => p.id !== id));
   }, []);
+
+  const handleSort = (value: 'recent' | 'stars') => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('sort', value);
+    router.push(`/dashboard?${params.toString()}`);
+  };
 
   // Empty state
   if (prompts.length === 0) {
@@ -213,10 +224,38 @@ export function DashboardContent({
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {prompts.map((prompt) => (
-        <DashboardCard key={prompt.id} prompt={prompt} onDelete={handleDelete} />
-      ))}
+    <div>
+      {/* Sort toggle */}
+      <div className="mb-4 flex justify-end">
+        <div className="flex rounded-lg border border-neutral-200 dark:border-neutral-700">
+          <button
+            onClick={() => handleSort('recent')}
+            className={`px-3 py-1 text-sm font-medium transition-colors ${
+              currentSort === 'recent'
+                ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
+                : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200'
+            } rounded-l-md`}
+          >
+            Recent
+          </button>
+          <button
+            onClick={() => handleSort('stars')}
+            className={`px-3 py-1 text-sm font-medium transition-colors ${
+              currentSort === 'stars'
+                ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
+                : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200'
+            } rounded-r-md`}
+          >
+            Most Starred
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {prompts.map((prompt) => (
+          <DashboardCard key={prompt.id} prompt={prompt} onDelete={handleDelete} />
+        ))}
+      </div>
     </div>
   );
 }

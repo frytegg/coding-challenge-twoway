@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { prisma } from '@/lib/db';
@@ -12,8 +13,13 @@ export const metadata: Metadata = {
   title: 'My Prompts — PromptVault',
 };
 
-export default async function DashboardPage() {
-  const session = await auth();
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ sort?: string }>;
+}) {
+  const [session, sp] = await Promise.all([auth(), searchParams]);
+  const sort = sp.sort === 'stars' ? 'stars' : 'recent';
 
   // Middleware guarantees a session, but guard defensively
   const userId = session?.user?.id;
@@ -22,7 +28,7 @@ export default async function DashboardPage() {
   const prompts = await prisma.prompt.findMany({
     where: { authorId: userId },
     include: { tags: { select: { id: true, name: true } } },
-    orderBy: { createdAt: 'desc' },
+    orderBy: sort === 'stars' ? { starCount: 'desc' } : { createdAt: 'desc' },
   });
 
   // Serialize dates for the client component
@@ -55,7 +61,9 @@ export default async function DashboardPage() {
         </Link>
       </div>
 
-      <DashboardContent initialPrompts={serialized} />
+      <Suspense>
+        <DashboardContent initialPrompts={serialized} currentSort={sort} />
+      </Suspense>
     </div>
   );
 }

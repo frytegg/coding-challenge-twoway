@@ -10,6 +10,7 @@ import {
 import { getSessionUser } from '@/lib/auth-guard';
 import { mutationLimiter } from '@/lib/rate-limit';
 import { Prisma } from '@/app/generated/prisma/client';
+import { auth } from '@/lib/auth';
 
 // Shared include for prompt queries
 const promptInclude = {
@@ -50,7 +51,7 @@ export async function GET(req: NextRequest): Promise<Response> {
   const orderBy: Prisma.PromptOrderByWithRelationInput =
     sort === 'stars' ? { starCount: 'desc' } : { createdAt: 'desc' };
 
-  const [prompts, total] = await Promise.all([
+  const [prompts, total, session] = await Promise.all([
     prisma.prompt.findMany({
       where,
       include: promptInclude,
@@ -59,9 +60,22 @@ export async function GET(req: NextRequest): Promise<Response> {
       take: limit,
     }),
     prisma.prompt.count({ where }),
+    auth(),
   ]);
 
-  return successResponse(prompts, { page, limit, total });
+  // When authenticated, include the user's starred prompt IDs so the UI
+  // can render filled stars without extra round-trips.
+  let starredIds: string[] = [];
+  if (session?.user?.id) {
+    const promptIds = prompts.map((p) => p.id);
+    const stars = await prisma.star.findMany({
+      where: { userId: session.user.id, promptId: { in: promptIds } },
+      select: { promptId: true },
+    });
+    starredIds = stars.map((s) => s.promptId);
+  }
+
+  return successResponse(prompts, { page, limit, total, starredIds });
 }
 
 // ─── POST /api/prompts ──────────────────────────────────────────

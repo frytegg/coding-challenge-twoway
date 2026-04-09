@@ -8,6 +8,7 @@ import { PromptCard, type PromptCardData } from '@/components/prompt-card';
 interface FetchResult {
   prompts: PromptCardData[];
   total: number;
+  starredIds: string[];
   filterKey: string;
 }
 
@@ -22,7 +23,7 @@ export function PromptGrid() {
   // Stable key representing the current filter combination
   const filterKey = `${q}|${tag}|${sort}`;
 
-  const [result, setResult] = useState<FetchResult>({ prompts: [], total: 0, filterKey: '' });
+  const [result, setResult] = useState<FetchResult>({ prompts: [], total: 0, starredIds: [], filterKey: '' });
   const [loadingMore, setLoadingMore] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const pageRef = useRef(1);
@@ -52,14 +53,17 @@ export function PromptGrid() {
 
     fetch(buildUrl(1))
       .then((res) => res.json())
-      .then((json: { data: PromptCardData[]; meta: { total: number } }) => {
+      .then((json: { data: PromptCardData[]; meta: { total: number; starredIds?: string[] } }) => {
         if (!cancelled) {
-          setResult({ prompts: json.data, total: json.meta.total, filterKey: key });
+          const starredIds = json.meta.starredIds ?? [];
+          const starredSet = new Set(starredIds);
+          const prompts = json.data.map((p) => ({ ...p, isStarred: starredSet.has(p.id) }));
+          setResult({ prompts, total: json.meta.total, starredIds, filterKey: key });
         }
       })
       .catch(() => {
         if (!cancelled) {
-          setResult({ prompts: [], total: 0, filterKey: key });
+          setResult({ prompts: [], total: 0, starredIds: [], filterKey: key });
         }
       });
 
@@ -77,13 +81,20 @@ export function PromptGrid() {
     setLoadingMore(true);
     fetch(buildUrl(nextPage))
       .then((res) => res.json())
-      .then((json: { data: PromptCardData[]; meta: { total: number } }) => {
+      .then((json: { data: PromptCardData[]; meta: { total: number; starredIds?: string[] } }) => {
         pageRef.current = nextPage;
-        setResult((prev) => ({
-          ...prev,
-          prompts: [...prev.prompts, ...json.data],
-          total: json.meta.total,
-        }));
+        const newStarredIds = json.meta.starredIds ?? [];
+        setResult((prev) => {
+          const mergedStarred = [...new Set([...prev.starredIds, ...newStarredIds])];
+          const starredSet = new Set(mergedStarred);
+          const newPrompts = json.data.map((p) => ({ ...p, isStarred: starredSet.has(p.id) }));
+          return {
+            ...prev,
+            prompts: [...prev.prompts, ...newPrompts],
+            total: json.meta.total,
+            starredIds: mergedStarred,
+          };
+        });
       })
       .catch(() => {})
       .finally(() => setLoadingMore(false));

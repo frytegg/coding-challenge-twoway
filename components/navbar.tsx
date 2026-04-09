@@ -7,6 +7,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import Link from 'next/link';
 import { Sparkles, Search, Plus, Menu, X } from 'lucide-react';
 import { UserMenu } from '@/components/auth/user-menu';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 function SearchInput({
   initialQuery,
@@ -35,6 +36,7 @@ function SearchInput({
       <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
       <input
         ref={inputRef}
+        id="search-input"
         type="text"
         placeholder="Search prompts..."
         value={query}
@@ -120,6 +122,7 @@ export function Navbar() {
               New Prompt
             </Link>
           )}
+          <ThemeToggle />
           <UserMenu />
         </div>
 
@@ -155,7 +158,8 @@ export function Navbar() {
                 New Prompt
               </Link>
             )}
-            <div className="pt-1">
+            <div className="flex items-center gap-2 pt-1">
+              <ThemeToggle />
               <UserMenu />
             </div>
           </div>

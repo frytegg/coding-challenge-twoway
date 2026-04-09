@@ -2,8 +2,9 @@
 
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
-import { Star, Copy, Check } from 'lucide-react';
+import { Copy, Check } from 'lucide-react';
 import { stripMarkdown, timeAgo } from '@/lib/utils';
+import { StarButton } from '@/components/star-button';
 
 export interface PromptCardData {
   id: string;
@@ -11,6 +12,7 @@ export interface PromptCardData {
   body: string;
   starCount: number;
   createdAt: string;
+  isStarred: boolean;
   author: {
     id: string;
     name: string | null;
@@ -127,10 +129,12 @@ export function PromptCard({ prompt }: { prompt: PromptCardData }) {
         </div>
 
         {/* Stars */}
-        <div className="flex items-center gap-1">
-          <Star className="h-3.5 w-3.5" />
-          <span>{prompt.starCount}</span>
-        </div>
+        <StarButton
+          promptId={prompt.id}
+          initialStarred={prompt.isStarred}
+          initialCount={prompt.starCount}
+          compact
+        />
 
         {/* Time */}
         <span className="ml-auto">{timeAgo(prompt.createdAt)}</span>

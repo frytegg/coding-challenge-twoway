@@ -21,7 +21,7 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: npx prisma db push --skip-generate
+      - run: npx prisma db push
       - run: pnpm lint
       - run: pnpm test -- --run
       - name: Seed database

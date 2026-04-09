@@ -6,8 +6,10 @@ import {
   unauthorized,
   forbidden,
   badRequest,
+  rateLimited,
 } from '@/lib/api-response';
-import { getSessionOrThrow } from '@/lib/auth-guard';
+import { getSessionUser } from '@/lib/auth-guard';
+import { mutationLimiter } from '@/lib/rate-limit';
 import { Prisma } from '@/app/generated/prisma/client';
 
 type RouteContext = { params: Promise<{ id: string }> };
@@ -42,7 +44,10 @@ export async function PUT(
   req: NextRequest,
   { params }: RouteContext,
 ): Promise<Response> {
-  const session = await getSessionOrThrow(req);
+  const rl = await mutationLimiter(req);
+  if (!rl.success) return rateLimited(rl.resetAt);
+
+  const session = await getSessionUser();
   if (!session) return unauthorized();
 
   const { id } = await params;
@@ -122,7 +127,10 @@ export async function DELETE(
   req: NextRequest,
   { params }: RouteContext,
 ): Promise<Response> {
-  const session = await getSessionOrThrow(req);
+  const rl = await mutationLimiter(req);
+  if (!rl.success) return rateLimited(rl.resetAt);
+
+  const session = await getSessionUser();
   if (!session) return unauthorized();
 
   const { id } = await params;

@@ -5,8 +5,10 @@ import {
   createdResponse,
   badRequest,
   unauthorized,
+  rateLimited,
 } from '@/lib/api-response';
-import { getSessionOrThrow } from '@/lib/auth-guard';
+import { getSessionUser } from '@/lib/auth-guard';
+import { mutationLimiter } from '@/lib/rate-limit';
 import { Prisma } from '@/app/generated/prisma/client';
 
 // Shared include for prompt queries
@@ -65,7 +67,10 @@ export async function GET(req: NextRequest): Promise<Response> {
 // ─── POST /api/prompts ──────────────────────────────────────────
 
 export async function POST(req: NextRequest): Promise<Response> {
-  const session = await getSessionOrThrow(req);
+  const rl = await mutationLimiter(req);
+  if (!rl.success) return rateLimited(rl.resetAt);
+
+  const session = await getSessionUser();
   if (!session) return unauthorized();
 
   let body: unknown;

@@ -64,3 +64,14 @@ export function badRequest(
 ): NextResponse<ApiErrorBody> {
   return errorResponse('BAD_REQUEST', message, 400);
 }
+
+export function rateLimited(resetAt: Date): NextResponse<ApiErrorBody> {
+  const retryAfter = Math.max(
+    1,
+    Math.ceil((resetAt.getTime() - Date.now()) / 1000),
+  );
+  return NextResponse.json(
+    { error: { code: 'RATE_LIMITED', message: 'Too many requests' } },
+    { status: 429, headers: { 'Retry-After': String(retryAfter) } },
+  );
+}

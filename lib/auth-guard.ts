@@ -1,5 +1,4 @@
-import { NextRequest } from 'next/server';
-import { prisma } from '@/lib/db';
+import { auth } from '@/lib/auth';
 
 // ─── Types ──────────────────────────────────────────────────────
 
@@ -13,33 +12,21 @@ export interface SessionUser {
 // ─── Session Helper ─────────────────────────────────────────────
 
 /**
- * Retrieves the current authenticated user from the request.
- *
- * **Phase 2 placeholder:** reads `x-user-id` header and looks up
- * the user in the database. Will be replaced with real NextAuth
- * `auth()` session in Phase 3.
- *
- * Returns null if no valid user — the caller decides whether to
- * return 401 or handle it differently.
+ * Retrieves the current authenticated session user via NextAuth.
+ * Returns null if no valid session exists — the caller decides
+ * whether to throw or return a 401 response.
  */
-export async function getSessionOrThrow(
-  req: NextRequest,
-): Promise<SessionUser | null> {
-  // TODO Phase 3: replace with `auth()` from NextAuth v5
-  const userId = req.headers.get('x-user-id');
-  if (!userId) return null;
+export async function getSessionUser(): Promise<SessionUser | null> {
+  const session = await auth();
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { id: true, name: true, email: true, image: true },
-  });
-
-  if (!user) return null;
+  if (!session?.user?.id || !session.user.email) {
+    return null;
+  }
 
   return {
-    userId: user.id,
-    name: user.name ?? '',
-    email: user.email,
-    image: user.image ?? '',
+    userId: session.user.id,
+    name: session.user.name ?? '',
+    email: session.user.email,
+    image: session.user.image ?? '',
   };
 }

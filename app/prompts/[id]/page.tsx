@@ -10,6 +10,7 @@ import { stripMarkdown, timeAgo } from '@/lib/utils';
 import { ShareButton } from '@/components/share-button';
 import { StarButton } from '@/components/star-button';
 import { CopyButton } from './copy-button';
+import { DeleteButton } from './delete-button';
 
 // ── Helpers ─────────────────────────────────────────────────────
 
@@ -171,13 +172,16 @@ export default async function PromptDetailPage({ params }: PageProps) {
           <CopyButton text={prompt.body} />
           <ShareButton url={promptUrl} />
           {isAuthor && (
-            <Link
-              href={`/prompts/${id}/edit`}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
-            >
-              <Pencil className="h-4 w-4" />
-              Edit
-            </Link>
+            <>
+              <Link
+                href={`/prompts/${id}/edit`}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
+              >
+                <Pencil className="h-4 w-4" />
+                Edit
+              </Link>
+              <DeleteButton promptId={id} />
+            </>
           )}
         </div>
 

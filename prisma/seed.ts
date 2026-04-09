@@ -1,12 +1,23 @@
 import { PrismaClient } from '@/app/generated/prisma/client';
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 import { hash } from 'bcryptjs';
 
-const adapter = new PrismaBetterSqlite3({
-  url: process.env.DATABASE_URL ?? 'file:./dev.db',
-});
+function createClient(): PrismaClient {
+  const url = process.env.DATABASE_URL ?? '';
+  const isSqlite = url.startsWith('file:') || url.endsWith('.db') || !url;
 
-const prisma = new PrismaClient({ adapter });
+  if (!isSqlite) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { PrismaPg } = require('@prisma/adapter-pg');
+    return new PrismaClient({ adapter: new PrismaPg({ connectionString: url }) });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3');
+  const adapter = new PrismaBetterSqlite3({ url: url || 'file:./dev.db' });
+  return new PrismaClient({ adapter });
+}
+
+const prisma = createClient();
 
 async function main() {
   // 1. Clear existing data (FK-safe order)

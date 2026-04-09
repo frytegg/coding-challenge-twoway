@@ -144,6 +144,49 @@ All responses follow `{ data, meta }` on success or `{ error: { code, message } 
 | `npx prisma migrate dev`    | Run migrations                  |
 | `npx prisma db seed`        | Seed demo data                  |
 
+## Deployment (Vercel + Neon)
+
+The project uses a dual-schema approach: `prisma/schema.prisma` (SQLite for local dev) and `prisma/schema.prod.prisma` (PostgreSQL for production). `prisma.config.ts` automatically selects the schema based on `DATABASE_URL`.
+
+### Steps
+
+1. **Create a Neon database** at [neon.tech](https://neon.tech) (free tier available). Copy the connection string (`postgresql://...`).
+
+2. **Connect your GitHub repo to Vercel** at [vercel.com/new](https://vercel.com/new). Select the repository and let Vercel auto-detect Next.js.
+
+3. **Set environment variables** in Vercel project settings → Environment Variables:
+
+   | Variable               | Value                                                       |
+   | ---------------------- | ----------------------------------------------------------- |
+   | `DATABASE_URL`         | `postgresql://user:pass@host/dbname?sslmode=require` (Neon) |
+   | `NEXTAUTH_URL`         | `https://your-app.vercel.app`                               |
+   | `NEXTAUTH_SECRET`      | Random 32+ char string (`openssl rand -base64 32`)          |
+   | `GOOGLE_CLIENT_ID`     | From Google Cloud Console (optional)                        |
+   | `GOOGLE_CLIENT_SECRET` | From Google Cloud Console (optional)                        |
+   | `GITHUB_ID`            | From GitHub Developer Settings (optional)                   |
+   | `GITHUB_SECRET`        | From GitHub Developer Settings (optional)                   |
+
+4. **Push the schema to Neon** (run once, locally):
+
+   ```bash
+   DATABASE_URL="postgresql://..." npx prisma db push --schema prisma/schema.prod.prisma
+   ```
+
+5. **Deploy.** Vercel runs `pnpm install` → `postinstall` (prisma generate) → `next build` automatically.
+
+6. **Seed production data** (optional):
+
+   ```bash
+   DATABASE_URL="postgresql://..." npx prisma db seed
+   ```
+
+### How the dual-schema works
+
+- `prisma.config.ts` checks `DATABASE_URL` at build time
+- PostgreSQL URL → uses `prisma/schema.prod.prisma` → generates PG-compatible Prisma client
+- SQLite URL (or unset) → uses `prisma/schema.prisma` → generates SQLite-compatible client
+- `lib/db.ts` picks the runtime adapter: SQLite driver for `file:` URLs, Prisma's built-in PG driver otherwise
+
 ## Known Limitations & Trade-offs
 
 | Area           | Limitation                                                            | Production path                                                    |

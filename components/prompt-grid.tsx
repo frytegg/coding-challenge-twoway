@@ -5,10 +5,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { PromptCard, type PromptCardData } from '@/components/prompt-card';
 
-interface Meta {
-  page: number;
-  limit: number;
+interface FetchResult {
+  prompts: PromptCardData[];
   total: number;
+  filterKey: string;
 }
 
 export function PromptGrid() {
@@ -19,12 +19,16 @@ export function PromptGrid() {
   const tag = searchParams.get('tag') ?? '';
   const sort = searchParams.get('sort') === 'stars' ? 'stars' : 'recent';
 
-  const [prompts, setPrompts] = useState<PromptCardData[]>([]);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
+  // Stable key representing the current filter combination
+  const filterKey = `${q}|${tag}|${sort}`;
+
+  const [result, setResult] = useState<FetchResult>({ prompts: [], total: 0, filterKey: '' });
   const [loadingMore, setLoadingMore] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const pageRef = useRef(1);
+
+  // Derive loading: true when the result doesn't match current filters
+  const loading = result.filterKey !== filterKey;
 
   // Build API URL for a given page
   const buildUrl = useCallback(
@@ -44,47 +48,46 @@ export function PromptGrid() {
   useEffect(() => {
     pageRef.current = 1;
     let cancelled = false;
-    setLoading(true);
+    const key = filterKey;
 
     fetch(buildUrl(1))
       .then((res) => res.json())
-      .then((json: { data: PromptCardData[]; meta: Meta }) => {
-        if (cancelled) return;
-        setPrompts(json.data);
-        setTotal(json.meta.total);
+      .then((json: { data: PromptCardData[]; meta: { total: number } }) => {
+        if (!cancelled) {
+          setResult({ prompts: json.data, total: json.meta.total, filterKey: key });
+        }
       })
       .catch(() => {
-        if (cancelled) return;
-        setPrompts([]);
-        setTotal(0);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setResult({ prompts: [], total: 0, filterKey: key });
+        }
       });
 
     return () => {
       cancelled = true;
     };
-  }, [buildUrl]);
+  }, [buildUrl, filterKey]);
 
   // Load next page
   const loadMore = useCallback(() => {
-    if (loadingMore) return;
-    // Check if more pages exist using prompts.length as proxy
-    if (prompts.length >= total) return;
+    if (loadingMore || loading) return;
+    if (result.prompts.length >= result.total) return;
 
     const nextPage = pageRef.current + 1;
     setLoadingMore(true);
     fetch(buildUrl(nextPage))
       .then((res) => res.json())
-      .then((json: { data: PromptCardData[]; meta: Meta }) => {
+      .then((json: { data: PromptCardData[]; meta: { total: number } }) => {
         pageRef.current = nextPage;
-        setPrompts((prev) => [...prev, ...json.data]);
-        setTotal(json.meta.total);
+        setResult((prev) => ({
+          ...prev,
+          prompts: [...prev.prompts, ...json.data],
+          total: json.meta.total,
+        }));
       })
       .catch(() => {})
       .finally(() => setLoadingMore(false));
-  }, [loadingMore, prompts.length, total, buildUrl]);
+  }, [loadingMore, loading, result.prompts.length, result.total, buildUrl]);
 
   // IntersectionObserver for infinite scroll
   useEffect(() => {
@@ -102,8 +105,7 @@ export function PromptGrid() {
     return () => observer.disconnect();
   }, [loadMore]);
 
-  // Derive hasMore from loaded data vs total — no ref read during render
-  const hasMore = prompts.length < total;
+  const hasMore = result.prompts.length < result.total;
 
   // Sort toggle handler
   const handleSort = (value: 'recent' | 'stars') => {
@@ -120,7 +122,7 @@ export function PromptGrid() {
         <p className="text-sm text-neutral-500 dark:text-neutral-400">
           {!loading ? (
             <>
-              {total} {total === 1 ? 'prompt' : 'prompts'}
+              {result.total} {result.total === 1 ? 'prompt' : 'prompts'}
             </>
           ) : (
             <span className="invisible">0 prompts</span>
@@ -158,7 +160,7 @@ export function PromptGrid() {
       )}
 
       {/* Empty state */}
-      {!loading && prompts.length === 0 && (
+      {!loading && result.prompts.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <p className="text-lg font-medium text-neutral-600 dark:text-neutral-300">
             No prompts found
@@ -172,10 +174,10 @@ export function PromptGrid() {
       )}
 
       {/* Grid */}
-      {!loading && prompts.length > 0 && (
+      {!loading && result.prompts.length > 0 && (
         <>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {prompts.map((prompt) => (
+            {result.prompts.map((prompt) => (
               <PromptCard key={prompt.id} prompt={prompt} />
             ))}
           </div>
